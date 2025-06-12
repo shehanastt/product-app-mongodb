@@ -8,6 +8,6 @@ router.post("/add",addProduct);
 router.get("/:id",getProductById);
 router.delete("/:id",deleteProductById);
 router.patch("/:id",updateProductById);
-router.patch("/soft-delete/:id",softDeleteProduct);
+router.patch("/:id",softDeleteProduct);
  
 export default router;

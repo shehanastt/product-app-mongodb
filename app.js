@@ -15,8 +15,16 @@ connectDB()
 app.use(express.json());
 app.use(cors());
 
-//
+// route
 app.use("/api/products",productRoute);
+
+// Custom error handler
+app.use((error, req, res, next) => {
+  res.status(error.code || 500).json({
+    message: error.message || "An unknown error occurred!",
+    status: false
+  });
+});
 
 // starting server
 app.listen(PORT, ()=> {

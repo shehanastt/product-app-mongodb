@@ -11,7 +11,7 @@ export const getProducts = async (req, res, next) =>{
         res.status(200).json({
             status: true,
             message: "",
-            data: listedProducts
+            data: listedProducts,
         });
     } catch (err){
         return next(new HttpError("error fetching products",500));
@@ -91,10 +91,12 @@ export const deleteProductById = async (req, res, next)=>{
 
 // delete(soft)
 export const softDeleteProduct = async (req,res,next)=> {
-    const {id} = req.params;
 
     try{
-        const delProduct = await Product.findByIdAndUpdate(id,
+    const id = req.params.id
+
+        const delProduct = await Product.findOneAndUpdate(
+            {_id: id, is_Deleted: false},
             { is_Deleted: true},
             { new: true}
         );
@@ -102,7 +104,7 @@ export const softDeleteProduct = async (req,res,next)=> {
         if(!delProduct){
             return next(new HttpError("not found",404));
         } else {
-            res.json({
+            res.status(200).json({
                 status: true,
                 message: "Product deleted successfully",
                 data: ""})
@@ -116,13 +118,15 @@ export const softDeleteProduct = async (req,res,next)=> {
 
 // update
 export const updateProductById = async (req, res, next)=>{
-    const {id} = req.params;
-    const {name, price} = req.body;
+    
 
     try {
-        const updatedProduct = await Product.findByIdAndUpdate(id,
-            { name , price },
-            { new: true, runValidators: true}
+        const id = req.params.id;
+           const {name, price} = req.body;
+        const updatedProduct = await Product.findOneAndUpdate(
+            {_id: id ,is_Deleted:false},//condition to get values
+            { name , price },//what to change
+            { new: true, runValidators: true}//to save
         );
 
         if(!updatedProduct){
@@ -131,7 +135,8 @@ export const updateProductById = async (req, res, next)=>{
             res.json({
                 status: true,
                 message: "Product updated successfully" ,
-                data: updatedProduct});
+                data: null
+            });
         }
     } catch (err){
         return next(new HttpError("error updating the product",500));
