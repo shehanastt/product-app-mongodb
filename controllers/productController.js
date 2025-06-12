@@ -7,7 +7,7 @@ import HttpError from "../middlewares/httpError.js";
 export const getProducts = async (req, res, next) =>{
 
     try {
-        const listedProducts = await Product.find({isDeleted: false});
+        const listedProducts = await Product.find({is_Deleted: false});
         res.status(200).json({
             status: true,
             message: "",
@@ -32,7 +32,11 @@ export const addProduct = async (req,res,next)=>{
 
     try {
         const savedProduct = await newProduct.save();
-        res.status(201).json(savedProduct);
+        res.status(201).json({
+            status: true,
+            message: "Product added",
+            data: ""
+        });
     } catch (err) {
         return next(new HttpError("Failed to add product", 500));
         }
@@ -45,11 +49,15 @@ export const getProductById = async (req, res, next) => {
     const {id} = req.params;
 
     try{
-        const viewProduct = await Product.findOne({_id: id, isDeleted: false });
+        const viewProduct = await Product.findOne({_id: id, is_Deleted: false });
         if(!viewProduct){
             return next(new HttpError("product not found",404));
         } else {
-            res.json(viewProduct);
+            res.json({
+            status: true,
+            message: "",
+            data: viewProduct
+        });
         }
     } catch {
         return next(new HttpError("error fetching product",500));
@@ -68,7 +76,11 @@ export const deleteProductById = async (req, res, next)=>{
         if(!deletedProduct){
             return next(new HttpError("product not found",404));
         } else {
-            res.json({ message: 'Product deleted successfully' })
+            res.json({ 
+                status: true,
+                message: 'Product deleted successfully',
+                data:""
+            })
         }
     } catch (error){
         return next( new HttpError("error deleting product",500));
@@ -83,14 +95,17 @@ export const softDeleteProduct = async (req,res,next)=> {
 
     try{
         const delProduct = await Product.findByIdAndUpdate(id,
-            { isDeleted: true},
+            { is_Deleted: true},
             { new: true}
         );
 
         if(!delProduct){
             return next(new HttpError("not found",404));
         } else {
-            res.json(delProduct)
+            res.json({
+                status: true,
+                message: "Product deleted successfully",
+                data: ""})
         }
     } catch (err){
         return next(new HttpError("error soft deleting product",500));
@@ -113,7 +128,10 @@ export const updateProductById = async (req, res, next)=>{
         if(!updatedProduct){
             return next(new HttpError("product not found",404));
         } else {
-            res.json(updatedProduct);
+            res.json({
+                status: true,
+                message: "Product updated successfully" ,
+                data: updatedProduct});
         }
     } catch (err){
         return next(new HttpError("error updating the product",500));

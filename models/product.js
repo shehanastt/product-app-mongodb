@@ -9,7 +9,7 @@ const productSchema = new mongoose.Schema({
         type: Number,
         required: true
     },
-    isDeleted:{
+    is_Deleted:{
         type: Boolean,
         default: false
     }
